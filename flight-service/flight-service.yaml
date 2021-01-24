@@ -1,47 +1,35 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: flight-service
-  namespace: flight-service-namespace
-  labels:
-    app: flight-app
-spec:
-  selector:
-    app: flight-app
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-deployment
-  namespace: flight-service-namespace
+  name: microservice-deployment
   labels:
-    app: flight-app
+    app: java-microservice
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      app: flight-app
+      app: java-microservice
   template:
     metadata:
       labels:
-        app: flight-app
+        app: java-microservice
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: beta.kubernetes.io/arch
-                operator: In
-                values:
-                - amd64
-                - arm64
       containers:
-      - name: nginx
-        image: 347516516956.dkr.ecr.us-east-2.amazonaws.com/flight-service:latest
+      - name: java-microservice-container 
+        image: 347516516956.dkr.ecr.us-east-2.amazonaws.com/flight-service:2.1
         ports:
-        - containerPort: 80
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: java-microservice-service
+spec:
+  #Creating a service of type load balancer. Load balancer gets created but takes time to reflect
+  type: LoadBalancer 
+  selector:
+    app: java-microservice
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080

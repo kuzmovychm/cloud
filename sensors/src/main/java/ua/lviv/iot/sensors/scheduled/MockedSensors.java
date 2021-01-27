@@ -12,7 +12,6 @@ import ua.lviv.iot.sensors.model.SensorDataDTO;
 import ua.lviv.iot.sensors.util.SensorDataUtil;
 
 @Log4j2
-@Component
 @RequiredArgsConstructor
 public class MockedSensors {
     private final RestTemplate restTemplate;
